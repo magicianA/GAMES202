@@ -16,4 +16,6 @@ void main(void) {
   vTextureCoord = aTextureCoord;
 
   gl_Position = uLightMVP * vec4(aVertexPosition, 1.0);
+  //gl_Position = uProjectionMatrix * uViewMatrix * uModelMatrix *
+  //              vec4(aVertexPosition, 1.0);  
 }
