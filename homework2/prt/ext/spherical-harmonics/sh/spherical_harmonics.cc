@@ -459,7 +459,7 @@ Eigen::Vector3d ToVector(double phi, double theta) {
 }
 
 void ToSphericalCoords(const Eigen::Vector3d& dir, double* phi, double* theta) {
-  CHECK(NearByMargin(dir.squaredNorm(), 1.0), "dir is not unit");
+  //CHECK(NearByMargin(dir.squaredNorm(), 1.0), "dir is not unit");
   // Explicitly clamp the z coordinate so that numeric errors don't cause it
   // to fall just outside of acos' domain.
   *theta = acos(Clamp(dir.z(), -1.0, 1.0));
@@ -467,7 +467,6 @@ void ToSphericalCoords(const Eigen::Vector3d& dir, double* phi, double* theta) {
   // both scaled by it and atan2 will handle it appropriately.
   *phi = atan2(dir.y(), dir.x());
 }
-
 double ImageXToPhi(int x, int width) {
   // The directions are measured from the center of the pixel, so add 0.5
   // to convert from integer pixel indices to float pixel coordinates.
@@ -522,7 +521,6 @@ double EvalSHSlow(int l, int m, const Eigen::Vector3d& dir) {
   ToSphericalCoords(dir, &phi, &theta);
   return EvalSH(l, m, phi, theta);
 }
-
 double EvalSH(int l, int m, double phi, double theta) {
   // If using the hardcoded functions, switch to cartesian
   if (l <= kHardCodedOrderLimit) {
@@ -540,7 +538,7 @@ double EvalSH(int l, int m, const Eigen::Vector3d& dir) {
     // checks it if we delegate to that function).
     CHECK(l >= 0, "l must be at least 0.");
     CHECK(-l <= m && m <= l, "m must be between -l and l.");
-    CHECK(NearByMargin(dir.squaredNorm(), 1.0), "dir is not unit.");
+    //CHECK(NearByMargin(dir.squaredNorm(), 1.0), "dir is not unit.");
 
     switch (l) {
       case 0:

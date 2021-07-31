@@ -126,9 +126,18 @@ namespace ProjEnv
                     // TODO: here you need to compute light sh of each face of cubemap of each pixel
                     // TODO: 此处你需要计算每个像素下cubemap某个面的球谐系数
                     Eigen::Vector3f dir = cubemapDirs[i * width * height + y * width + x];
+                    auto r = dir.cast<double>();
                     int index = (y * width + x) * channel;
                     Eigen::Array3f Le(images[i][index + 0], images[i][index + 1],
                                       images[i][index + 2]);
+                    int shIndex = 0;
+                    for(int l = 0;l < SHOrder;l++){
+                        for(int m = -l;m <= l;m++){
+                            float shV = sh::EvalSH(l,m,r);
+                            SHCoeffiecents[shIndex] += Le * shV * CalcArea(x,y,width,height);
+                            shIndex++;
+                        }
+                    }
                 }
             }
         }
@@ -208,15 +217,19 @@ public:
                 const auto wi = Vector3f(d.x(), d.y(), d.z());
                 if (m_Type == Type::Unshadowed)
                 {
+                    double cosTerm = wi.dot(n);
+                    return std::max(cosTerm,0.0);
                     // TODO: here you need to calculate unshadowed transport term of a given direction
                     // TODO: 此处你需要计算给定方向下的unshadowed传输项球谐函数值
-                    return 0;
                 }
                 else
                 {
                     // TODO: here you need to calculate shadowed transport term of a given direction
                     // TODO: 此处你需要计算给定方向下的shadowed传输项球谐函数值
-                    return 0;
+                    double cosTerm = wi.dot(n);
+                    Ray3f ray(v,wi);
+                    double visibility = scene->rayIntersect(ray) ? 0 : 1;
+                    return std::max(cosTerm,0.0) * visibility;
                 }
             };
             auto shCoeff = sh::ProjectFunction(SHOrder, shFunc, m_SampleCount);
@@ -275,6 +288,7 @@ public:
         // TODO: you need to delete the following four line codes after finishing your calculation to SH,
         //       we use it to visualize the normals of model for debug.
         // TODO: 在完成了球谐系数计算后，你需要删除下列四行，这四行代码的作用是用来可视化模型法线
+
         if (c.isZero()) {
             auto n_ = its.shFrame.n.cwiseAbs();
             return Color3f(n_.x(), n_.y(), n_.z());

@@ -88,8 +88,8 @@ float findBlocker( sampler2D shadowMap,  vec2 uv, float zReceiver ,float areaSiz
 	float res = 0.0;
   float shadowMapz = 0.0;
   int blockerCnt = 0;
-  //poissonDiskSamples(vec2(1,1));
-  uniformDiskSamples(vec2(1,1));
+  poissonDiskSamples(uv);
+  //uniformDiskSamples(vec2(1,1));
   for(int i = 0;i < NUM_SAMPLES;i++){
     shadowMapz = unpack(texture2D(shadowMap,poissonDisk[i] * areaSize + uv));
     if(shadowMapz - 1e-2 < zReceiver){
@@ -104,8 +104,8 @@ float findBlocker( sampler2D shadowMap,  vec2 uv, float zReceiver ,float areaSiz
 float PCF(sampler2D shadowMap, vec4 shadowCoord,float filterSize) {
   float res = 0.0;
   float shadowMapz = 0.0;
-  //poissonDiskSamples(vec2(1,1));
-  uniformDiskSamples(vec2(1,1));
+  poissonDiskSamples(shadowCoord.xy);
+  //uniformDiskSamples(vec2(1,1));
   for(int i = 0;i < NUM_SAMPLES;i++){
     shadowMapz = unpack(texture2D(shadowMap,poissonDisk[i] * filterSize + shadowCoord.xy));
     res += (shadowCoord.z - 1e-2) > shadowMapz ? 0.0 : 1.0;
