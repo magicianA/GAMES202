@@ -131,9 +131,9 @@ namespace ProjEnv
                     Eigen::Array3f Le(images[i][index + 0], images[i][index + 1],
                                       images[i][index + 2]);
                     int shIndex = 0;
-                    for(int l = 0;l < SHOrder;l++){
+                    for(int l = 0;l <= SHOrder;l++){
                         for(int m = -l;m <= l;m++){
-                            float shV = sh::EvalSH(l,m,r);
+                            float shV = sh::EvalSHSlow(l,m,r);
                             SHCoeffiecents[shIndex] += Le * shV * CalcArea(x,y,width,height);
                             shIndex++;
                         }
